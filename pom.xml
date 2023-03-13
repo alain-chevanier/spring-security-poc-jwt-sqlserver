@@ -51,6 +51,15 @@
 			<scope>runtime</scope>
 <!--			<version>4.0</version>-->
 		</dependency>
+
+		<dependency>
+			<groupId>org.flywaydb</groupId>
+			<artifactId>flyway-core</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.flywaydb</groupId>
+			<artifactId>flyway-sqlserver</artifactId>
+		</dependency>
 		
 		<dependency>
 			<groupId>io.jsonwebtoken</groupId>

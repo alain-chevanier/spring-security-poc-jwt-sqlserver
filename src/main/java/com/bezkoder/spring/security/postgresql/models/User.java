@@ -1,5 +1,9 @@
 package com.bezkoder.spring.security.postgresql.models;
 
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -14,6 +18,7 @@ import javax.validation.constraints.Size;
 			@UniqueConstraint(columnNames = "username"),
 			@UniqueConstraint(columnNames = "email") 
 		})
+@EntityListeners(AuditingEntityListener.class)
 public class User {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -31,6 +36,10 @@ public class User {
 	@NotBlank
 	@Size(max = 120)
 	private String password;
+
+	@CreatedDate
+	@Column(updatable = false)
+	private Date createdAt;
 
 	@ManyToMany(fetch = FetchType.LAZY)
 	@JoinTable(	name = "user_roles", 
