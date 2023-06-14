@@ -93,6 +93,23 @@ public class AuthController {
 							 signUpRequest.getEmail(),
 							 encoder.encode(signUpRequest.getPassword()));
 
+		signUpRequest.getRole();
+		Set<Role> roles = new HashSet<>();
+
+		if (signUpRequest.getRole() == null || signUpRequest.getRole().isEmpty()) {
+			Role userRole = roleRepository.findByName(ERole.ROLE_USER)
+				.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Role not found " + ERole.ROLE_ADMIN));
+			roles.add(userRole);
+		} else {
+			signUpRequest.getRole().forEach(role -> {
+				Role userRole = roleRepository.findByName(ERole.valueOf(role))
+			 		.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Role not found " + role));
+				roles.add(userRole);
+		 	});
+		}
+
+		user.setRoles(roles);
+
 		userRepository.save(user);
 
 		return ResponseEntity.ok(new MessageResponse("User registered successfully!"));
