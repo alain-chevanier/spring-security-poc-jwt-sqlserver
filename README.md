@@ -84,13 +84,16 @@ solución por medio del formulario.
 ### Federación de Usuario
 
 ### Descripción
-
+Vamos a trabajar con un pequeño proyecto de spring boot que administra la federación de usuario de un negocio.
+Cada usuario tiene al menos 3 datos asociados "username", "password" e "email". Además opcionalmente le podemos
+asignar un rol.
 
 ### Requerimientos
+La idea es reorganizar este proyecto de tal manera que represente una arquitectura hexagonal válida,
+que siga los principios SOLID de diseño orientado a objetos y que contenga al menos un par de pruebas
+de integración escritas con cucumber.
 
-
-Funcionalidades a implementar:
-* Representar el tablero
-* Imprimir en la consola el estado del tablero
-* Hacer una jugada
-* Comprobar si un jugador ha ganado.
+Funcionalidades que debe de seguir sirviendo:
+* Creación de Usuario (/api/auth/signup)
+* Login de Usuarios (/api/auth/signin)
+* Verificar que con un token válido podemos acceder a un recurso protegido (/api/test/user)
