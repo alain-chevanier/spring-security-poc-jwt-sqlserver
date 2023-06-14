@@ -32,3 +32,6 @@ build/
 
 ### VS Code ###
 .vscode/
+
+# except except this. Order mmatters, do not rearange
+data/sqlserver/db-data
