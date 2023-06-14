@@ -1,0 +1,22 @@
+version: "3.9"
+services:
+  sqlserver_my_federation:
+    # es importante este nombre porque es el que utilizamos para descubrirlo desde los otros servicios
+    container_name: sqlserver_my_federation
+    build: ./docker_compose_data/sqlserver
+    user: '0:0'
+    ports:
+      - 1435:1433
+    restart: always
+    environment:
+      ACCEPT_EULA: 1
+      MSSQL_SA_PASSWORD: PasswordO1.
+      MSSQL_PID: Developer
+    volumes:
+      - ./docker_compose_data/sqlserver/db-data:/var/opt/mssql
+    healthcheck:
+      test: /opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P "PasswordO1." -Q "SELECT 1" -b -o /dev/null
+      interval: 10s
+      timeout: 3s
+      retries: 10
+      start_period: 10s

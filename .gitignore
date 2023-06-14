@@ -34,4 +34,4 @@ build/
 .vscode/
 
 # except except this. Order mmatters, do not rearange
-data/sqlserver/db-data
+docker_compose_data/sqlserver/db-data
