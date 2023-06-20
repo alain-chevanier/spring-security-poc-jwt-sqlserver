@@ -13,7 +13,7 @@ import static org.hamcrest.Matchers.is;
 public class VersionEndpointStepDefinitions extends SpringIntegrationTest {
   @When("^the client calls /version$")
   public void the_client_issues_GET_version() throws Throwable {
-    executeGet("/version", Void.class);
+    executeGet("/version", String.class);
   }
 
   @And("^the client receives server version (.+)$")
