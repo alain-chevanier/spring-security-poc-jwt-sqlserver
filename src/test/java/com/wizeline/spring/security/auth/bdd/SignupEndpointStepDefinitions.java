@@ -29,7 +29,7 @@ public class SignupEndpointStepDefinitions extends SpringIntegrationTest {
   UserStubber userStubber;
 
   @When("^the client calls /signup with valid information$")
-  public void the_client_issues_GET_version() throws Throwable {
+  public void theClientIssuesAValidRequestToSignup() throws Throwable {
     userStubber = new UserStubber(userRepository);
     User user = userStubber.stub();
     SignupRequest request = SignupRequest.builder()
@@ -43,8 +43,28 @@ public class SignupEndpointStepDefinitions extends SpringIntegrationTest {
   }
 
   @And("^the user was registered successfully$")
-  public void the_client_receives_server_version_body() throws Throwable {
+  public void theClientReceivesAMessageOfSuccess() throws Throwable {
     String response = lastResponseEntity.getBody().toString();
     assertThat(response, is("{\"message\":\"User registered successfully!\"}"));
+  }
+
+  @When("^the client calls /signup with information from an existing user$")
+  public void theClientIssuesARequestToSignupAnExistingUser() throws Throwable {
+    userStubber = new UserStubber(userRepository);
+    User user = userStubber.stubPersisted();
+    SignupRequest request = SignupRequest.builder()
+      .username(user.getUsername())
+      .password(user.getPassword())
+      .email(user.getEmail())
+      .role(Set.of("ROLE_USER"))
+      .build();
+    executePost("/api/auth/signup", request, String.class);
+    lastRegisteredUser = user;
+  }
+
+  @And("^the user already exists message is received$")
+  public void theClientReceivesAUserAlreadyExistsMessage() throws Throwable {
+    String response = lastResponseEntity.getBody().toString();
+    assertThat(response, is("{\"message\":\"Error: Username is already taken!\"}"));
   }
 }
