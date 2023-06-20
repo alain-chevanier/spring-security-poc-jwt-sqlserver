@@ -1,82 +1,51 @@
 package com.wizeline.spring.security.auth.bdd;
 
 import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import com.wizeline.spring.security.auth.SpringBootSecuritySQLServerApplication;
 import io.cucumber.spring.CucumberContextConfiguration;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.client.ClientHttpResponse;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.web.client.ResponseErrorHandler;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.*;
 import org.springframework.web.client.RestTemplate;
 
 @CucumberContextConfiguration
 @SpringBootTest(classes = SpringBootSecuritySQLServerApplication.class, webEnvironment = WebEnvironment.DEFINED_PORT)
+@Slf4j
 public class SpringIntegrationTest {
-  static ResponseResults latestResponse = null;
+  static RequestEntity<?> lastRequestEntity;
+  static ResponseEntity<?> lastResponseEntity;
 
   @Autowired
   protected RestTemplate restTemplate;
 
-  void executeGet(String url) throws IOException {
-    final Map<String, String> headers = new HashMap<>();
-    headers.put("Accept", "application/json");
-    final HeaderSettingRequestCallback requestCallback = new HeaderSettingRequestCallback(headers);
-    final ResponseResultErrorHandler errorHandler = new ResponseResultErrorHandler();
+  @Value("${testing-server.baseurl}")
+  private String baseUrl;
 
-    restTemplate.setErrorHandler(errorHandler);
-    latestResponse = restTemplate.execute(url, HttpMethod.GET, requestCallback, response -> {
-      if (errorHandler.hadError) {
-        return (errorHandler.getResults());
-      } else {
-        return (new ResponseResults(response));
-      }
-    });
+  <S> void executeGet(String url, Class<S> returnType) throws URISyntaxException {
+    HttpHeaders headers =  new HttpHeaders();
+    headers.setContentType(MediaType.APPLICATION_JSON);
+    RequestEntity<Void> requestEntity = new RequestEntity<>(headers, HttpMethod.GET, new URI(baseUrl + url));
+    ResponseEntity<S> responseEntity = restTemplate.exchange(requestEntity, new ParameterizedTypeReference<>() {});
+    lastRequestEntity = requestEntity;
+    lastResponseEntity = responseEntity;
   }
 
-  void executePost() throws IOException {
-    final Map<String, String> headers = new HashMap<>();
-    headers.put("Accept", "application/json");
-    final HeaderSettingRequestCallback requestCallback = new HeaderSettingRequestCallback(headers);
-    final ResponseResultErrorHandler errorHandler = new ResponseResultErrorHandler();
-
-    if (restTemplate == null) {
-      restTemplate = new RestTemplate();
-    }
-
-    restTemplate.setErrorHandler(errorHandler);
-    latestResponse = restTemplate
-      .execute("http://localhost:8082/baeldung", HttpMethod.POST, requestCallback, response -> {
-        if (errorHandler.hadError) {
-          return (errorHandler.getResults());
-        } else {
-          return (new ResponseResults(response));
-        }
-      });
-  }
-
-  private class ResponseResultErrorHandler implements ResponseErrorHandler {
-    private ResponseResults results = null;
-    private Boolean hadError = false;
-
-    private ResponseResults getResults() {
-      return results;
-    }
-
-    @Override
-    public boolean hasError(ClientHttpResponse response) throws IOException {
-      hadError = response.getRawStatusCode() >= 400;
-      return hadError;
-    }
-
-    @Override
-    public void handleError(ClientHttpResponse response) throws IOException {
-      results = new ResponseResults(response);
-    }
+  <T, S> void executePost(String url, T requestBody, Class<S> returnType) throws URISyntaxException {
+    HttpHeaders headers =  new HttpHeaders();
+    headers.setContentType(MediaType.APPLICATION_JSON);
+    RequestEntity<T> requestEntity = new RequestEntity<>(requestBody, headers, HttpMethod.POST, new URI(baseUrl + url));
+    ResponseEntity<S> responseEntity = restTemplate.exchange(requestEntity, returnType);
+    lastRequestEntity = requestEntity;
+    lastResponseEntity = responseEntity;
   }
 }
