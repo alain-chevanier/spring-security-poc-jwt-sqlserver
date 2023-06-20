@@ -9,7 +9,7 @@ import org.springframework.http.HttpStatus;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 
-public class StepDefsIntegrationTest extends SpringIntegrationTest {
+public class VersionEndpointIntegrationTestStepDefinitions extends SpringIntegrationTest {
 
   @When("^the client calls /baeldung$")
   public void the_client_issues_POST_hello() throws Throwable {
