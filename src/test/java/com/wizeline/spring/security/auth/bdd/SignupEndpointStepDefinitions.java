@@ -67,4 +67,16 @@ public class SignupEndpointStepDefinitions extends SpringIntegrationTest {
     String response = lastResponseEntity.getBody().toString();
     assertThat(response, is("{\"message\":\"Error: Username is already taken!\"}"));
   }
+
+  @When("^the client calls /signup with invalid request data$")
+  public void theClientIssuesAnInvalidRequestToSignup() throws Throwable {
+    SignupRequest request = SignupRequest.builder()
+      .username("")
+      .password("")
+      .email("")
+      .role(Set.of())
+      .build();
+    executePost("/api/auth/signup", request, String.class);
+    lastRegisteredUser = null;
+  }
 }

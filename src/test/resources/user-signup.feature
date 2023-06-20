@@ -7,3 +7,6 @@ Feature: endpoint to perform user signup
     When the client calls /signup with information from an existing user
     Then the client receives status code of 409
     And the user already exists message is received
+  Scenario: Call /signup with invalid request data
+    When the client calls /signup with invalid request data
+    Then the client receives status code of 400
