@@ -1,12 +1,15 @@
 Feature: endpoint to perform user signup
   Scenario: Call /signup with valid data and user is created
-    When the client calls /signup with valid information
-    Then the client receives status code of 200
-    And the user was registered successfully
+    Given a valid signup request
+    When a request is made to /signup
+    Then the request succeeds
+      And the user is registered
   Scenario: Call /signup with valid data and but user already exists
-    When the client calls /signup with information from an existing user
-    Then the client receives status code of 409
-    And the user already exists message is received
+    Given a signup request with a username from an existing user
+    When a request is made to /signup
+    Then the request fails with conflict
+      And a "user already exists" message is returned
   Scenario: Call /signup with invalid request data
-    When the client calls /signup with invalid request data
-    Then the client receives status code of 400
+    Given a signup request with empty values
+    When a request is made to /signup
+    Then the request fails with bad request
