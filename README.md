@@ -1,4 +1,4 @@
-# Arquitectura Hexagonal y xDD
+# Software Architecture y Behavioral Tests
 
 ## Objetivo
 
@@ -14,8 +14,8 @@ docker compose up -d
 ```
 
 Esto crea la base de datos de SQLServer que vamos a utilizar para poder realizar las operaciones.
-Hay que asegurar que la _schema_ `my_business_federation` existe, para ello dentro del contenedor
-hay que ejecutar el siguiente comando:
+Hay que asegurar que el _schema_ `my_business_federation` y `my_business_federation_test` existen, 
+para ello dentro del contenedor hay que ejecutar el siguiente comando:
 
 ```
 $ docker exec sqlserver_my_federation /opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P PasswordO1. -d master -i create-database.sql
@@ -85,15 +85,17 @@ solución por medio del formulario.
 
 ### Descripción
 Vamos a trabajar con un pequeño proyecto de spring boot que administra la federación de usuario de un negocio.
-Cada usuario tiene al menos 3 datos asociados "username", "password" e "email". Además opcionalmente le podemos
-asignar un rol.
+Cada usuario tiene al menos 3 datos asociados "username", "password" e "email". Además, opcionalmente le podemos
+asignar roles.
 
 ### Requerimientos
-La idea es reorganizar este proyecto de tal manera que represente una arquitectura hexagonal válida,
-que siga los principios SOLID de diseño orientado a objetos y que contenga al menos un par de pruebas
-de integración escritas con cucumber.
+La idea es reorganizar el código de este proyecto de tal manera que represente una arquitectura hexagonal 
+o de N-capas válida, que siga los principios SOLID de diseño orientado a objetos y que contenga al menos 
+una de pruebas de integración escrita con cucumber.
 
-Funcionalidades que debe de seguir sirviendo:
-* Creación de Usuario (/api/auth/signup)
-* Login de Usuarios (/api/auth/signin)
-* Verificar que con un token válido podemos acceder a un recurso protegido (/api/test/user)
+No es necesario que hagas refactor de todo el código, con que refactorices el código de `/api/auth/signup`
+o de `/api/auth/signin` es suficiente.
+
+Es suficiente con que escribas un integration test con cucumber para `/api/auth/signin`. Ya proveemos dos
+ejemplos de integration tests para `/api/auth/signup`, uno escrito solo con código de java y el otro con
+Lenguaje de Gherkin que ejecutar cucumber, ambos integration tests son equivalentes.
